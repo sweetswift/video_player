@@ -153,7 +153,7 @@ class _Controls extends StatelessWidget {
       iconSize: 30.0,
       color: Colors.white,
       icon: Icon(
-        Icons.play_arrow,
+        iconData,
       ),
     );
   }
