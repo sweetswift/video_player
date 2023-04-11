@@ -15,6 +15,7 @@ class CustomVideoPlayer extends StatefulWidget {
 
 class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
   VideoPlayerController? videoPlayerController;
+  Duration currentPosition = Duration();
 
   @override
   void initState() {
@@ -51,17 +52,24 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
             onForwardPressed: onForwardPressed,
             isPlaying: videoPlayerController!.value.isPlaying,
           ),
-          Positioned(
-            right: 0,
-            child: IconButton(
-              color: Colors.white,
-              iconSize: 30.0,
-              onPressed: () {},
-              icon: Icon(
-                Icons.photo_camera_back,
-              ),
-            ),
+          _NewVideo(
+            onPressed: onNewVideoPressed,
           ),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            left: 0,
+            child: Slider(
+              max: videoPlayerController!.value.duration.inSeconds.toDouble(),
+              value: currentPosition.inSeconds.toDouble(),
+              onChanged: (double val) {
+                setState(() {
+                  currentPosition = Duration(seconds: val.toInt());
+                });
+              },
+              min: 0,
+            ),
+          )
         ],
       ),
     );
@@ -78,6 +86,8 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
       }
     });
   }
+
+  void onNewVideoPressed() {}
 
   void onReversPressed() {
     final currentPosition = videoPlayerController!.value.position;
@@ -97,7 +107,8 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
 
     Duration position = maxPosition; // 전체길이
 
-    if ((maxPosition - Duration(seconds: 3)).inSeconds > currentPosition.inSeconds) {
+    if ((maxPosition - Duration(seconds: 3)).inSeconds >
+        currentPosition.inSeconds) {
       position = currentPosition + Duration(seconds: 3);
     }
 
@@ -154,6 +165,27 @@ class _Controls extends StatelessWidget {
       color: Colors.white,
       icon: Icon(
         iconData,
+      ),
+    );
+  }
+}
+
+class _NewVideo extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const _NewVideo({required this.onPressed, Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      right: 0,
+      child: IconButton(
+        color: Colors.white,
+        iconSize: 30.0,
+        onPressed: onPressed,
+        icon: Icon(
+          Icons.photo_camera_back,
+        ),
       ),
     );
   }
