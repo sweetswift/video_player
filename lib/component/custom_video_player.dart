@@ -91,7 +91,18 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
     videoPlayerController!.seekTo(position);
   }
 
-  void onForwardPressed() {}
+  void onForwardPressed() {
+    final maxPosition = videoPlayerController!.value.duration;
+    final currentPosition = videoPlayerController!.value.position;
+
+    Duration position = maxPosition; // 전체길이
+
+    if ((maxPosition - Duration(seconds: 3)).inSeconds > currentPosition.inSeconds) {
+      position = currentPosition + Duration(seconds: 3);
+    }
+
+    videoPlayerController!.seekTo(position);
+  }
 }
 
 class _Controls extends StatelessWidget {
