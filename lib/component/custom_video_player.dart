@@ -49,6 +49,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
             onPlayPressed: onPlayPressed,
             onReversPressed: onReversPressed,
             onForwardPressed: onForwardPressed,
+            isPlaying: videoPlayerController!.value.isPlaying,
           ),
           Positioned(
             right: 0,
@@ -66,29 +67,44 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
     );
   }
 
-  void onPlayPressed(){
+  void onPlayPressed() {
     // 1.이미 실행중이면 중지
     // 2.실행중이 아니면 실행
-    if(videoPlayerController!.value.isPlaying){
-      videoPlayerController!.pause();
-    }else{
-      videoPlayerController!.play();
-    }
+    setState(() {
+      if (videoPlayerController!.value.isPlaying) {
+        videoPlayerController!.pause();
+      } else {
+        videoPlayerController!.play();
+      }
+    });
   }
-  void onReversPressed(){}
-  void onForwardPressed(){}
 
+  void onReversPressed() {
+    final currentPosition = videoPlayerController!.value.position;
+
+    Duration position = Duration(); //0초
+
+    if (currentPosition.inSeconds > 3) {
+      position = currentPosition - Duration(seconds: 3);
+    }
+
+    videoPlayerController!.seekTo(position);
+  }
+
+  void onForwardPressed() {}
 }
 
 class _Controls extends StatelessWidget {
   final VoidCallback onPlayPressed;
   final VoidCallback onReversPressed;
   final VoidCallback onForwardPressed;
+  final bool isPlaying;
 
   const _Controls({
     required this.onPlayPressed,
     required this.onReversPressed,
     required this.onForwardPressed,
+    required this.isPlaying,
     Key? key,
   }) : super(key: key);
 
@@ -106,7 +122,7 @@ class _Controls extends StatelessWidget {
           ),
           rederIconButton(
             onPressed: onPlayPressed,
-            iconData: Icons.play_arrow,
+            iconData: isPlaying ? Icons.pause : Icons.play_arrow,
           ),
           rederIconButton(
             onPressed: onForwardPressed,
