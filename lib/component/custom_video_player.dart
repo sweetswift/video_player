@@ -59,15 +59,33 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
             bottom: 0,
             right: 0,
             left: 0,
-            child: Slider(
-              max: videoPlayerController!.value.duration.inSeconds.toDouble(),
-              value: currentPosition.inSeconds.toDouble(),
-              onChanged: (double val) {
-                setState(() {
-                  currentPosition = Duration(seconds: val.toInt());
-                });
-              },
-              min: 0,
+            child: Row(
+              children: [
+                Text(
+                  '${currentPosition.inMinutes}:${(currentPosition.inSeconds % 60).toString().padLeft(2, '0')}',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                Expanded(
+                  child: Slider(
+                    value: currentPosition.inSeconds.toDouble(),
+                    onChanged: (double val) {
+                      setState(() {
+                        currentPosition = Duration(seconds: val.toInt());
+                      });
+                    },
+                    max: videoPlayerController!.value.duration.inSeconds.toDouble(),
+                    min: 0,
+                  ),
+                ),
+                Text(
+                  '${videoPlayerController!.value.duration.inMinutes}:${(videoPlayerController!.value.duration.inSeconds % 60).toString().padLeft(2, '0')}',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
           )
         ],
