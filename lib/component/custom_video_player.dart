@@ -31,6 +31,13 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
 
     await videoPlayerController!.initialize();
 
+    videoPlayerController!.addListener(() {
+      final currentPosition = videoPlayerController!.value.position;
+      setState(() {
+        this.currentPosition = currentPosition;
+      });
+    });
+
     setState(() {});
   }
 
@@ -59,33 +66,42 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
             bottom: 0,
             right: 0,
             left: 0,
-            child: Row(
-              children: [
-                Text(
-                  '${currentPosition.inMinutes}:${(currentPosition.inSeconds % 60).toString().padLeft(2, '0')}',
-                  style: TextStyle(
-                    color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Row(
+                children: [
+                  Text(
+                    '${currentPosition.inMinutes}:${(currentPosition.inSeconds % 60).toString().padLeft(2, '0')}',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: Slider(
-                    value: currentPosition.inSeconds.toDouble(),
-                    onChanged: (double val) {
-                      setState(() {
-                        currentPosition = Duration(seconds: val.toInt());
-                      });
-                    },
-                    max: videoPlayerController!.value.duration.inSeconds.toDouble(),
-                    min: 0,
+                  Expanded(
+                    child: Slider(
+                      value: currentPosition.inSeconds.toDouble(),
+                      onChanged: (double val) {
+                        videoPlayerController!.seekTo(
+                          Duration(
+                            seconds: val.toInt(),
+                          ),
+                        );
+                        setState(() {
+                          currentPosition = Duration(seconds: val.toInt());
+                        });
+                      },
+                      max: videoPlayerController!.value.duration.inSeconds
+                          .toDouble(),
+                      min: 0,
+                    ),
                   ),
-                ),
-                Text(
-                  '${videoPlayerController!.value.duration.inMinutes}:${(videoPlayerController!.value.duration.inSeconds % 60).toString().padLeft(2, '0')}',
-                  style: TextStyle(
-                    color: Colors.white,
+                  Text(
+                    '${videoPlayerController!.value.duration.inMinutes}:${(videoPlayerController!.value.duration.inSeconds % 60).toString().padLeft(2, '0')}',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           )
         ],
